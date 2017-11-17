@@ -85,4 +85,33 @@ app.post('/api/user/login', function (req, res) {
     console.log("[LOG]: User login finishing...");
 });
 
+//Routes - user query
+app.post('/api/user/query', function (req, res) {
+    console.log("[LOG]: Search customer list starting...");
+
+    var condition = {};
+
+    //Query creterials - mobile
+    if (req.body.mobile) {
+        var pattern = new RegExp("^.*" + req.body.mobile + ".*$");
+        condition.mobile = pattern;
+    }
+
+    //Query creterials - date
+    if (req.body.reg_date) {
+        condition.reg_date = { $lt: req.body.reg_date };
+    }
+
+    User.find(condition, function (err, customers) {
+        if (err) {
+            res.send(err);
+        } else {
+            console.log("[LOG]: There are " + customers.length + " customers be found.");
+            res.json(customers);
+        }
+    });
+
+    console.log("[LOG]: Search customer list finishing...");
+});
+
 module.exports = app;

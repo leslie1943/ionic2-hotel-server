@@ -34,7 +34,7 @@ app.post('/api/room', room);
 **** **** **** **** **** **** **** **** ****/
 app.post('/api/user/register', user);
 app.post('/api/user/login', user);
-
+app.post('/api/user/query', user);
 
 //set port
 app.listen(8080);
