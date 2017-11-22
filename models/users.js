@@ -8,6 +8,12 @@ var app = express();
 
 //Object model
 var User = mongoose.model('users', {
+    email:String,
+    serial: String,
+    firstname: String,
+    lastname: String,
+    nick: String,
+    birth: String,
     mobile: String,
     password: String,
     reg_date: String
@@ -21,19 +27,24 @@ app.post('/api/user/register', function (req, res) {
     var md5 = crypto.createHash('md5');
 
     var newUser = new User({
+        email: req.body.email,
+        serial: req.body.serial,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        nick: req.body.nick,
+        birth: req.body.birth,
         mobile: req.body.mobile,
-        password: md5.update(req.body.password).digest('hex').toString(),
+        password: md5.update(req.body.password ? req.body.password : "").digest('hex').toString(),
         reg_date: new Date().toISOString()
     });
 
-    User.findOne({ mobile: newUser["mobile"] }, function (err, user) {
+    User.findOne({ email: newUser["email"] }, function (err, user) {
         if (err) {
             res.send(err);
         } else {
-            //The user has been existed already.
             if (user) {
                 //return result to application from node server side.
-                res.json({ "ERROR": "DUPLICATED", "MSG": "THIS NUMBER HAS BEEN REGISTERED" });
+                res.json({ "ERROR": "DUPLICATED", "MSG": "THIS NUMBER HAS BEEN REGISTERED ALREADY!" });
             }
             //The user is new.
             else {
@@ -59,7 +70,7 @@ app.post('/api/user/login', function (req, res) {
     var md5 = crypto.createHash('md5');
 
     User.findOne({
-        mobile: req.body.mobile,
+        email: req.body.email,
     }, function (err, user) {
         //The mobile number is valid.
         if (user) {
