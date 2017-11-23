@@ -6,9 +6,17 @@ var crypto = require('crypto');
 
 var app = express();
 
+/**
+ * 
+ * @param {*} param 
+ */
+function parFormat(param){
+    return new RegExp("^.*" + param + ".*$");
+}
+
 //Object model
 var User = mongoose.model('users', {
-    email:String,
+    email: String,
     serial: String,
     firstname: String,
     lastname: String,
@@ -98,31 +106,42 @@ app.post('/api/user/login', function (req, res) {
 
 //Routes - user query
 app.post('/api/user/query', function (req, res) {
-    console.log("[LOG]: Search customer list starting...");
+    console.log("[LOG]: Search users list starting...");
 
     var condition = {};
 
+    //Query creterials - email
+    if(req.body.email){
+        condition.email = parFormat(req.body.email);
+    }
+    //Query creterials - sn
+    if(req.body.serial){
+        condition.serial = parFormat(req.body.serial);
+    }
+    //Query creterials - first name
+    if(req.body.firstname){
+        condition.firstname = parFormat(req.body.firstname);
+    }
+    //Query creterials - last name
+    if(req.body.lastname){
+        condition.lastname = parFormat(req.body.lastname);
+    }
     //Query creterials - mobile
     if (req.body.mobile) {
-        var pattern = new RegExp("^.*" + req.body.mobile + ".*$");
-        condition.mobile = pattern;
+        condition.mobile = parFormat(req.body.mobile);
     }
 
-    //Query creterials - date
-    if (req.body.reg_date) {
-        condition.reg_date = { $lt: req.body.reg_date };
-    }
-
-    User.find(condition, function (err, customers) {
+    User.find(condition, function (err, users) {
         if (err) {
             res.send(err);
         } else {
-            console.log("[LOG]: There are " + customers.length + " customers be found.");
-            res.json(customers);
+            console.log("[LOG]: There are " + users.length + " users be found.");
+            console.log("[LOG]: The result is:" + JSON.stringify(users));
+            res.json(users);
         }
     });
 
-    console.log("[LOG]: Search customer list finishing...");
+    console.log("[LOG]: Search users list finishing...");
 });
 
 module.exports = app;
