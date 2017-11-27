@@ -2,7 +2,7 @@
 var express = require('express');
 var app = express();
 
-var room = require('./models/rooms');
+// var room = require('./models/rooms');
 var user = require('./models/users');
 
 var mongoose = require('mongoose');
@@ -25,9 +25,9 @@ app.use(cors());
 /**** **** **** **** **** **** **** **** ****
  *          Room module.*
 **** **** **** **** **** **** **** **** ****/
-app.post('/api/rooms', room);
-app.post('/api/rooms/reserve', room);
-app.post('/api/room', room);
+// app.post('/api/rooms', room);
+// app.post('/api/rooms/reserve', room);
+// app.post('/api/room', room);
 
 /**** **** **** **** **** **** **** **** ****
  *          User module.*
@@ -35,6 +35,7 @@ app.post('/api/room', room);
 app.post('/api/user/register', user);
 app.post('/api/user/login', user);
 app.post('/api/user/query', user);
+app.post('/api/user/delete', user);
 
 //set port
 app.listen(8080);

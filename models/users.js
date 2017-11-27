@@ -10,7 +10,7 @@ var app = express();
  * 
  * @param {*} param 
  */
-function parFormat(param){
+function parFormat(param) {
     return new RegExp("^.*" + param + ".*$");
 }
 
@@ -111,19 +111,19 @@ app.post('/api/user/query', function (req, res) {
     var condition = {};
 
     //Query creterials - email
-    if(req.body.email){
+    if (req.body.email) {
         condition.email = parFormat(req.body.email);
     }
     //Query creterials - sn
-    if(req.body.serial){
+    if (req.body.serial) {
         condition.serial = parFormat(req.body.serial);
     }
     //Query creterials - first name
-    if(req.body.firstname){
+    if (req.body.firstname) {
         condition.firstname = parFormat(req.body.firstname);
     }
     //Query creterials - last name
-    if(req.body.lastname){
+    if (req.body.lastname) {
         condition.lastname = parFormat(req.body.lastname);
     }
     //Query creterials - mobile
@@ -144,4 +144,18 @@ app.post('/api/user/query', function (req, res) {
     console.log("[LOG]: Search users list finishing...");
 });
 
+//Routes - user delete
+app.post('/api/user/delete', function (req, res) {
+    console.log("[LOG]: Delete user starting...");
+    console.log("[LOG]: the delete user is : " + JSON.stringify(req.body));
+
+    User.deleteOne({ _id: req.body._id }, function (err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(data);
+        }
+    });
+    console.log("[LOG]: Delete user finishing...");
+});
 module.exports = app;
