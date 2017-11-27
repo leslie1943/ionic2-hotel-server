@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var express = require('express');
+var user_group = require('../models/user_group');
 
 //encrypt module
 var crypto = require('crypto');
@@ -13,6 +14,8 @@ var app = express();
 function parFormat(param) {
     return new RegExp("^.*" + param + ".*$");
 }
+
+
 
 //Object model
 var User = mongoose.model('users', {
@@ -52,7 +55,9 @@ app.post('/api/user/register', function (req, res) {
         } else {
             if (user) {
                 //return result to application from node server side.
-                res.json({ "ERROR": "DUPLICATED", "MSG": "THIS NUMBER HAS BEEN REGISTERED ALREADY!" });
+                res.json({ "ERROR": "Duplicated", "MSG": "This email has been registered already." });
+            }else if(!user_group[newUser["email"]]){
+                res.json({ "ERROR": "Invalid", "MSG": "This email is NOT valid!" });
             }
             //The user is new.
             else {
