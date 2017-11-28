@@ -2,20 +2,17 @@ var mongoose = require('mongoose');
 var express = require('express');
 var user_group = require('../models/user_group');
 
+var mail = require('../email/mail');
+
 //encrypt module
 var crypto = require('crypto');
 
 var app = express();
 
-/**
- * 
- * @param {*} param 
- */
+//param
 function parFormat(param) {
     return new RegExp("^.*" + param + ".*$");
 }
-
-
 
 //Object model
 var User = mongoose.model('users', {
@@ -53,23 +50,36 @@ app.post('/api/user/register', function (req, res) {
         if (err) {
             res.send(err);
         } else {
+            //Duplicated validation.
             if (user) {
                 //return result to application from node server side.
                 res.json({ "ERROR": "Duplicated", "MSG": "This email has been registered already." });
-            }else if(!user_group[newUser["email"]]){
+            }
+            //Existing validation.
+            else if (!user_group[newUser["email"]]["exist"]) {
                 res.json({ "ERROR": "Invalid", "MSG": "This email is NOT valid!" });
             }
-            //The user is new.
-            else {
-                newUser.save(function (err, new_user) {
-                    if (err) {
-                        res.send(err);
-                    } else {
-                        //return result to application from node server side.
-                        res.json(new_user);
-                        console.log("[LOG]: The new user id is: " + new_user._id);
-                    }
-                });
+            //Email validation.
+            else if (user_group[newUser["email"]]["exist"]) {
+
+                //Email mapping serail number - Failure
+                if (user_group[newUser["email"]]["serial"] !== req.body.serial) {
+                    res.json({ "ERROR": "Invalid", "MSG": "This email and serial number not matched!" });
+                }
+                //Email mapping serail number - Success
+                else {
+                    newUser.save(function (err, new_user) {
+                        if (err) {
+                            res.send(err);
+                        } else {
+                            // sendMail('leslie43@sina.com','Hello Node','<b>Thanks!</b>');
+                            mail(newUser["email"], 'Hello Node', '<b>Thanks!</b>');
+                            //return result to application from node server side.
+                            res.json(new_user);
+                            console.log("[LOG]: The new user id is: " + new_user._id);
+                        }
+                    });
+                }
             }
         }
     });
