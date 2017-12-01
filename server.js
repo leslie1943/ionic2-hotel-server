@@ -36,6 +36,7 @@ app.post('/api/user/register', user);
 app.post('/api/user/login', user);
 app.post('/api/user/query', user);
 app.post('/api/user/delete', user);
+app.post('/api/user/update', user);
 
 //set port
 app.listen(8080);

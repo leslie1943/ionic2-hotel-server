@@ -162,8 +162,6 @@ app.post('/api/user/query', function (req, res) {
 //Routes - user delete
 app.post('/api/user/delete', function (req, res) {
     console.log("[LOG]: Delete user starting...");
-    console.log("[LOG]: the delete user is : " + JSON.stringify(req.body));
-
     User.deleteOne({ _id: req.body._id }, function (err, data) {
         if (err) {
             console.log(err);
@@ -173,4 +171,34 @@ app.post('/api/user/delete', function (req, res) {
     });
     console.log("[LOG]: Delete user finishing...");
 });
+
+//Routes - user update
+app.post('/api/user/update', function (req, res) {
+    console.log("[LOG]: Update user starting...");
+    console.log("[LOG]: the update user is : " + JSON.stringify(req.body));
+    console.log("[XXXXX]: the icon is : " + JSON.stringify(req.body.files));
+
+    var upd_field = {
+        // _id: req.body._id,
+        // email: req.body.email,
+        // serial: req.body.serial,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        mobile: req.body.mobile,
+        icon: req.body.icon
+    };
+
+    User.update({ _id: req.body._id }, {$set: upd_field}, function (err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            
+            console.log(JSON.stringify(data));
+            res.json(data);
+        }
+    });
+
+    console.log("[LOG]: Update user finishing...");
+});
+
 module.exports = app;
