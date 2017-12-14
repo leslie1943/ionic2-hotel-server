@@ -20,11 +20,13 @@ var User = mongoose.model('users', {
     serial: String,
     firstname: String,
     lastname: String,
+    role: String,
     nick: String,
     birth: String,
     mobile: String,
     password: String,
-    reg_date: String
+    reg_date: String,
+    icon: Object
 });
 
 //Routes - user register
@@ -39,6 +41,7 @@ app.post('/api/user/register', function (req, res) {
         serial: req.body.serial,
         firstname: req.body.firstname,
         lastname: req.body.lastname,
+        role: req.body.role,
         nick: req.body.nick,
         birth: req.body.birth,
         mobile: req.body.mobile,
@@ -65,6 +68,10 @@ app.post('/api/user/register', function (req, res) {
                 //Email mapping serail number - Failure
                 if (user_group[newUser["email"]]["serial"] !== req.body.serial) {
                     res.json({ "ERROR": "Invalid", "MSG": "This email and serial number not matched!" });
+                }
+
+                if (user_group[newUser["email"]]["role"] !== req.body.role) {
+                    res.json({ "ERROR": "Invalid", "MSG": "Wrong role!" });
                 }
                 //Email mapping serail number - Success
                 else {
@@ -179,13 +186,9 @@ app.post('/api/user/update', function (req, res) {
     console.log("[XXXXX]: the icon is : " + JSON.stringify(req.body.files));
 
     var upd_field = {
-        // _id: req.body._id,
-        // email: req.body.email,
-        // serial: req.body.serial,
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         mobile: req.body.mobile,
-        icon: req.body.icon
     };
 
     User.update({ _id: req.body._id }, {$set: upd_field}, function (err, data) {
